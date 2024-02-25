@@ -3,8 +3,8 @@
 #!icon=https://raw.githubusercontent.com/deezertidal/private/main/icons/startingad.png
 #!homepage=https://whatshub.top
 #!author=Mixed
-name: removeAd
-desc: APP去广告
+name: APP去广告
+desc: 去除bilibili相关内容
 http:
   mitm:
     - "*-release.wuta-cam.com"
