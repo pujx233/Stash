@@ -1,0 +1,12 @@
+name: tachiManga去广告
+desc: 去除开屏广告
+
+rule-providers:
+  anti-AD:
+    type: http
+    behavior: domain
+    url: "googleads.g.doubleclick.net"
+    interval: 86400
+
+rules:
+  - RULE-SET,anti-AD,REJECT
