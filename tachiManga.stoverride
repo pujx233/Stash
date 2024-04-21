@@ -7,8 +7,25 @@ rule-providers:
   anti-AD:
     type: http
     behavior: domain
-    url: "googleads.g.doubleclick.net"
+    url: "https://googleads.g.doubleclick.net"
     interval: 86400
 
 rules:
   - RULE-SET,anti-AD,REJECT
+
+http:
+  mitm:
+    - "-redirector*.googlevideo.com"
+    - "*.googlevideo.com"
+
+  script:
+    - match: "^https?://[\w-]+\.googlevideo\.com/.+"
+      name: reject-tachimanga-requests
+      type: response
+      require-body: true
+      timeout: 10
+
+script-providers:
+  reject-tachimanga-requests:
+    url: "https://raw.githubusercontent.com/pujx233/Stash/main/reject-tachimanga-requests.js"
+    interval: 86400
