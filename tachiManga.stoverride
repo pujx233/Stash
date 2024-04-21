@@ -27,5 +27,5 @@ http:
 
   script-providers:
     reject-tachimanga-requests:
-    url: https://raw.githubusercontent.com/pujx233/Stash/main/reject-tachimanga-requests.js
+    url: https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/dist/youtube.response.beta.js
     interval: 86400	  
