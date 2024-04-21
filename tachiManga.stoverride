@@ -1,12 +1,13 @@
 name: TachiManga去广告
 desc: TachiManga去广告
-icon: "https://github.com/Toperlock/Quantumult/raw/main/icon/Doraemon/Doraemon-1054.png"
+icon: |-
+  https://github.com/Toperlock/Quantumult/raw/main/icon/Doraemon/Doraemon-1054.png
 
 rule-providers:
   anti-AD:
     type: http
     behavior: domain
-    url: "https://googleads.g.doubleclick.net"
+    url: "googleads.g.doubleclick.net"
     interval: 86400
 
 rules:
@@ -26,5 +27,5 @@ http:
 
 script-providers:
   reject-tachimanga-requests:
-    url: "https://raw.githubusercontent.com/pujx233/Stash/main/reject-tachimanga-requests.js"
+    url: https://raw.githubusercontent.com/pujx233/Stash/main/reject-tachimanga-requests.js
     interval: 86400
