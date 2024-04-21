@@ -1,17 +1,14 @@
-function onRequest(context) {
-    var requestHeaders = context.request.headers;
-    var userAgent = requestHeaders['User-Agent'];
+const targetUserAgent = 'Tachimanga';
 
-    console.log("Request Headers:");
-    for (var header in requestHeaders) {
-        console.log(header + ": " + requestHeaders[header]);
-    }
-
-    if (userAgent && userAgent.includes('Tachimanga')) {
-        console.log("Blocked a request with User-Agent containing 'Tachimanga'");
-        context.reject();
+if ($request && $request.headers && $request.headers['User-Agent']) {
+    let userAgent = $request.headers['User-Agent'];
+    if (userAgent.includes(targetUserAgent)) {
+        console.log("Blocking request with User-Agent containing 'Tachimanga'");
+        $done({ response: { status: 403, body: 'Access denied' } });
     } else {
-        console.log("Allowed a request with User-Agent: " + userAgent);
-        context.next();
+        console.log("Request allowed with User-Agent: " + userAgent);
+        $done({});
     }
+} else {
+    $done({});
 }
