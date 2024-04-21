@@ -19,7 +19,7 @@ http:
     - "*.googlevideo.com"
 
   script:
-    - match: ^https?://[\w-]+\.googlevideo\.com/.+
+    - match: ^https?://[\w-]+\.googlevideo\.com/(?!.*youtube).+
       name: reject-tachimanga-requests
       type: request  
       require-body: false
