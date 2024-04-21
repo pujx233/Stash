@@ -12,20 +12,3 @@ rule-providers:
 
 rules:
   - RULE-SET,anti-AD,REJECT
-
-http:
-  mitm:
-    - "-redirector*.googlevideo.com"
-    - "*.googlevideo.com"
-
-  script:
-    - match: "^https?://[\w-]+\.googlevideo\.com/.+"
-      name: reject-tachimanga-requests
-      type: response
-      require-body: true
-      timeout: 10
-
-script-providers:
-  reject-tachimanga-requests:
-    url: https://raw.githubusercontent.com/pujx233/Stash/main/reject-tachimanga-requests.js
-    interval: 86400
