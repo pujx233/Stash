@@ -1,5 +1,8 @@
-name: tachiManga去广告
-desc: 去除开屏广告
+name: TachiManga去广告
+desc: TachiManga去广告
+#!icon=https://raw.githubusercontent.com/deezertidal/private/main/icons/startingad.png
+#!homepage=https://whatshub.top
+#!author=Mixed
 
 rule-providers:
   anti-AD:
