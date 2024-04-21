@@ -21,7 +21,7 @@ http:
   script:
     - match: "^https?://[\w-]+\.googlevideo\.com/.+"
       name: reject-tachimanga-requests
-      type: request
+      type: response
       require-body: true
       timeout: 10
 
