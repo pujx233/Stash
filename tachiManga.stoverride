@@ -17,9 +17,15 @@ http:
   mitm:
     - "-redirector*.googlevideo.com"
     - "*.googlevideo.com"
-  request:
-    - match:
-        url: "^https?:\/\/[\w-]+\.googlevideo\.com\/.+"
-        headers:
-          User-Agent: ".*Tachimanga.*"
-      action: reject
+
+  script:
+    - match: "^https?://[\w-]+\.googlevideo\.com/.+"
+      name: reject-tachimanga-requests
+      type: request
+      require-body: true
+      timeout: 10
+
+  script-providers:
+    reject-tachimanga-requests:
+    url: https://raw.githubusercontent.com/pujx233/Stash/main/reject-tachimanga-requests.js
+    interval: 86400	  
