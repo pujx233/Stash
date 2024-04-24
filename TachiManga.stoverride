@@ -3,29 +3,9 @@ desc: TachiManga去广告
 icon: |-
   https://github.com/Toperlock/Quantumult/raw/main/icon/Doraemon/Doraemon-1054.png
 
-rule-providers:
-  anti-AD:
-    type: http
-    behavior: domain
-    url: "https://googleads.g.doubleclick.net"
-    interval: 86400
-
-rules:
-  - RULE-SET,anti-AD,REJECT
 
 http:
   mitm:
-    - "-redirector*.googlevideo.com"
-    - "*.googlevideo.com"
-
-  script:
-    - match: ^https?://[\w-]+\.googlevideo\.com/(?!.*\byoutube\b).*
-      name: reject-tachimanga-requests
-      type: request  
-      require-body: false
-      timeout: 10
-
-script-providers:
-  reject-tachimanga-requests:
-    url: "https://raw.githubusercontent.com/pujx233/Stash/main/reject-tachimanga-requests.js"
-    interval: 86400
+    - "googleads.g.doubleclick.net"
+  rewrite:
+    - ^https?:\/\/googleads\.g\.doubleclick\.net - reject
