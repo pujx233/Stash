@@ -3,9 +3,6 @@ desc: TachiManga去广告
 icon: |-
   https://github.com/Toperlock/Quantumult/raw/main/icon/Doraemon/Doraemon-1054.png
 
-rules:
-  - googleads.g.doubleclick.net,REJECT
-
 http:
   mitm:
     - "googleads.g.doubleclick.net"
