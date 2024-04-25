@@ -8,7 +8,6 @@ http:
     - "googleads.g.doubleclick.net"
   rewrite:
     - ^https?:\/\/googleads\.g\.doubleclick\.net - reject
-	
   script:
     - match: ^https?:\/\/[\w-]+\.googlevideo\.com\/.+$
       name: reject-tachimanga-requests
