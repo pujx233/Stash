@@ -1,4 +1,4 @@
-// 知乎精简 2026-09-08：单关注标签的布局开关对照，尚待实机验证。
+// 知乎去广告 2026-09-08：单关注标签的布局开关对照，尚待实机验证。
 // API coverage informed by Kelee's Zhihu_remove_ads.lpx and fmz200's zhihu.js.
 // No account data is stored or sent by this script.
 (() => {
@@ -50,14 +50,14 @@
       cleanContent(data);
     }
     if (!Object.values(count).some(n => n > 0)) {
-      console.log("[知乎精简] " + category() + "：已检查，无需修改");
+      console.log("[知乎去广告] " + category() + "：已检查，无需修改");
       return $done({});
     }
     const body = codec.restore(JSON.stringify(data));
-    console.log("[知乎精简] " + category() + "：广告条目=" + count.ads + "，推荐模块=" + count.recommendations + "，广告字段=" + count.fields + "，标签=" + count.tabs + "，网络配置=" + count.network);
+    console.log("[知乎去广告] " + category() + "：广告条目=" + count.ads + "，推荐模块=" + count.recommendations + "，广告字段=" + count.fields + "，标签=" + count.tabs + "，网络配置=" + count.network);
     return $done({ body });
   } catch (_) {
-    console.log("[知乎精简] 响应无法安全处理，已保留原文");
+    console.log("[知乎去广告] 响应无法安全处理，已保留原文");
     return $done({});
   }
 
