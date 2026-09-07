@@ -25,7 +25,8 @@
   const isTabs = host === "api" && /^\/root\/tab\/v\d+$/.test(path);
   const isConfig = host === "m-cloud" && path === "/api/cloud/zhihu/config/all";
   const isContent = ["api", "www", "page-info", "zhuanlan"].includes(host) && (
-    /^\/moments(?:_v\d+)?(?:\/|$)/.test(path) ||
+    /^\/moments(?:_v\d+)?$/.test(path) ||
+    /^\/moments\/(?:recommend|timeline)$/.test(path) ||
     /^\/topstory\/(?:recommend|hot-lists)(?:\/|$)/.test(path) ||
     /^\/questions\/\d+\/feeds(?:\/|$)/.test(path) ||
     /^\/(?:answers|articles|pins)\/v\d+\/\d+(?:\/|$)/.test(path) ||
