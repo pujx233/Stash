@@ -1,12 +1,25 @@
 #!name=知乎精简
-#!desc=仅保留首页的关注标签，将关注页的精选请求改为最新时间线。停用此插件即可撤回本插件的网络改写；知乎可能需重新启动以刷新标签缓存。
-#!author=Local
-#!tag=自用
+#!desc=拦截开屏广告及活动浮层，清理关注、推荐、回答和评论中的广告。默认开启「知乎精简」：首页仅保留关注，并使用最新时间线；关闭该开关后仍保留去广告。更新或切换开关后请完全关闭知乎再打开，以刷新页面缓存。
+#!author=pujx233
+#!homepage=https://github.com/pujx233/Stash
+#!openUrl=https://apps.apple.com/app/id432274380
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Zhihu.png
+#!tag=去广告
 #!loon_version=3.4.0(962)
+#!date=2026-09-08
+
+[Argument]
+simplify = switch,true,tag=知乎精简,desc=首页只保留关注并使用最新时间线。关闭后保留正常首页及关注排序，去广告仍然生效。
 
 [Rewrite]
-^https:\/\/api\.zhihu\.com\/root\/tab\/v\d(?:\?.+)?$ response-body-json-jq 'if (.tab_list|type)=="array" then (.tab_list|map(select(.tab_type=="follow"))) as $tabs | if ($tabs|length)>0 then .tab_list=$tabs else . end else . end'
-^(https:\/\/api\.zhihu\.com\/moments_v3\?(?:[^#]*&)?)feed_type=recommend(?=&|$)(.*)$ header $1feed_type=timeline$2
+^https:\/\/(?:api|www)\.zhihu\.com\/commercial_api\/ reject-dict
+^https:\/\/api\.zhihu\.com\/content-distribution-core\/bubble\/common\/show(?:\?|$) reject-dict
+^https:\/\/api\.zhihu\.com\/(?:ad-style-service\/request|fringe\/ad)(?:[/?]|$) reject-dict
+^https:\/\/api\.zhihu\.com\/.*\/featured-comment-ad(?:[/?]|$) reject-dict
+
+[Script]
+http-request ^https:\/\/api\.zhihu\.com\/moments_v\d+\? script-path=https://raw.githubusercontent.com/pujx233/Stash/main/ZhihuLite.js,timeout=10,tag=知乎精简·最新时间线,argument=[{simplify}]
+http-response ^https:\/\/(?:api|www|page-info|zhuanlan|m-cloud)\.zhihu\.com\/(?:root\/tab\/v\d+|moments(?:_v\d+)?(?:[/?]|$)|topstory\/(?:recommend|hot-lists)|questions\/\d+\/feeds|(?:answers|articles|pins)\/v\d+\/\d+|(?:api\/)?v\d+\/(?:questions|answers|articles)\/|next-(?:bff|data|render)(?:\?|$)|comment_v\d+\/|api\/cloud\/zhihu\/config\/all) script-path=https://raw.githubusercontent.com/pujx233/Stash/main/ZhihuLite.js,requires-body=true,timeout=10,tag=知乎精简·内容清理,argument=[{simplify}]
 
 [Mitm]
-hostname=api.zhihu.com
+hostname=api.zhihu.com,www.zhihu.com,page-info.zhihu.com,zhuanlan.zhihu.com,m-cloud.zhihu.com
