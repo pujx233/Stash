@@ -1,4 +1,4 @@
-// 知乎精简 2026-09-08
+// 知乎精简 2026-09-08：关注流兴趣推荐卡片修正。
 // API coverage informed by Kelee's Zhihu_remove_ads.lpx and fmz200's zhihu.js.
 // No account data is stored or sent by this script.
 (() => {
@@ -29,7 +29,7 @@
     return $done({});
   }
 
-  const count = { ads: 0, fields: 0, tabs: 0, network: 0 };
+  const count = { ads: 0, recommendations: 0, fields: 0, tabs: 0, network: 0 };
   try {
     // Keep 64-bit answer/video IDs exact while changing unrelated JSON fields.
     const codec = protectIntegers($response.body);
@@ -38,8 +38,8 @@
     if (isTabs) {
       if (simplify && Array.isArray(data.tab_list)) {
         if (data.tab_list.some(tab => tab && tab.tab_type === "follow")) {
-          // The tested iOS app cannot cold-start reliably with just one tab.
-          // Preserve both built-in controllers; do not infer local UI selection.
+          // Existing temporary two-tab behavior is retained for a controlled card-only comparison.
+          // This does NOT satisfy the requested follow-only navigation or prove its root cause.
           const tabs = data.tab_list.filter(tab => tab && ["follow", "recommend"].includes(tab.tab_type));
           count.tabs = data.tab_list.length - tabs.length;
           data.tab_list = tabs;
@@ -48,6 +48,7 @@
     } else if (isConfig) {
       cleanNetworkConfig(data);
     } else {
+      if (simplify) cleanRecommendationModules(data);
       cleanContent(data);
     }
     if (!Object.values(count).some(n => n > 0)) {
@@ -55,7 +56,7 @@
       return $done({});
     }
     const body = codec.restore(JSON.stringify(data));
-    console.log("[知乎精简] " + category() + "：广告条目=" + count.ads + "，广告字段=" + count.fields + "，标签=" + count.tabs + "，网络配置=" + count.network);
+    console.log("[知乎精简] " + category() + "：广告条目=" + count.ads + "，推荐模块=" + count.recommendations + "，广告字段=" + count.fields + "，标签=" + count.tabs + "，网络配置=" + count.network);
     return $done({ body });
   } catch (_) {
     console.log("[知乎精简] 响应无法安全处理，已保留原文");
@@ -92,6 +93,49 @@
       const label = element && element.text && element.text.panel_text;
       return typeof label === "string" && /^(?:广告|推广|赞助)$/.test(label.trim());
     });
+  }
+  // Match module metadata at known feed boundaries, never words in answer/comment bodies.
+  // Evidence: fmz200's /moments_v3 title and /next-bff origin_data.next_guide handling.
+  // A real /moments_v3 timeline capture also puts this label in ComponentCard
+  // moments_biz_data.action_text and Author.desc_line, not in a module title.
+  function cleanRecommendationModules(data) {
+    const labels = new Set(["为您推荐", "为你推荐", "你可能感兴趣", "推荐的相关内容"]);
+    const isLabel = value => typeof value === "string" && labels.has(value.trim());
+    const hasRecommendationHint = value => typeof value === "string" &&
+      value.split(/[·•]/).some(part => isLabel(part));
+    const injectedFollowCard = item => {
+      if (item.type === "ComponentCard") {
+        const business = item.extra && item.extra.business_ext_map && item.extra.business_ext_map.moments_biz_data;
+        if (business && hasRecommendationHint(business.action_text)) return true;
+        return Array.isArray(item.children) && item.children.some(child =>
+          child && child.type === "Author" && child.desc_line &&
+          Array.isArray(child.desc_line.elements) && child.desc_line.elements.some(element =>
+            element && element.type === "Text" && hasRecommendationHint(element.text)));
+      }
+      return item.type === "moments_feed" && item.source && hasRecommendationHint(item.source.action_text);
+    };
+    const isContentObject = value => value && typeof value === "object" && (
+      ["answer", "article", "question", "pin", "comment", "zvideo"].includes(value.type) ||
+      typeof value.content === "string" || typeof value.excerpt === "string"
+    );
+    const removeFrom = (owner, key, predicate) => {
+      if (!owner || !Array.isArray(owner[key])) return;
+      owner[key] = owner[key].filter(item => {
+        if (item && typeof item === "object" && predicate(item)) {
+          count.recommendations++;
+          return false;
+        }
+        return true;
+      });
+    };
+    if (host === "api" && (/^\/moments(?:_v\d+)?$/.test(path) || /^\/moments\/(?:recommend|timeline)$/.test(path))) {
+      removeFrom(data, "data", item => injectedFollowCard(item) || (isLabel(item.title) &&
+        !isContentObject(item) && !isContentObject(item.target)));
+    } else if (path === "/next-bff") {
+      removeFrom(data, "data", item => isLabel(item.origin_data && item.origin_data.next_guide && item.origin_data.next_guide.title));
+    } else if (path === "/next-data") {
+      removeFrom(data.data, "data", item => isLabel(item.next_guide && item.next_guide.title));
+    }
   }
   function cleanContent(node) {
     if (!node || typeof node !== "object") return;
