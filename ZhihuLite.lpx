@@ -1,0 +1,12 @@
+#!name=知乎精简
+#!desc=仅保留首页的关注标签，将关注页的精选请求改为最新时间线。停用此插件即可撤回本插件的网络改写；知乎可能需重新启动以刷新标签缓存。
+#!author=Local
+#!tag=自用
+#!loon_version=3.4.0(962)
+
+[Rewrite]
+^https:\/\/api\.zhihu\.com\/root\/tab\/v\d(?:\?.+)?$ response-body-json-jq 'if (.tab_list|type)=="array" then (.tab_list|map(select(.tab_type=="follow"))) as $tabs | if ($tabs|length)>0 then .tab_list=$tabs else . end else . end'
+^(https:\/\/api\.zhihu\.com\/moments_v3\?(?:[^#]*&)?)feed_type=recommend(?=&|$)(.*)$ header $1feed_type=timeline$2
+
+[Mitm]
+hostname=api.zhihu.com
