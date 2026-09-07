@@ -11,16 +11,7 @@
   const host = match[1];
   const path = match[2];
 
-  if (typeof $response === "undefined") {
-    if (simplify && host === "api" && /^\/moments_v\d+$/.test(path)) {
-      const latest = url.replace(/([?&])feed_type=recommend(?=&|$)/, "$1feed_type=timeline");
-      if (latest !== url) {
-        console.log("[知乎精简] 关注请求已切换为最新时间线");
-        return $done({ url: latest });
-      }
-    }
-    return $done({});
-  }
+  if (typeof $response === "undefined") return $done({});
 
   const isTabs = host === "api" && /^\/root\/tab\/v\d+$/.test(path);
   const isConfig = host === "m-cloud" && path === "/api/cloud/zhihu/config/all";
@@ -46,10 +37,12 @@
     if (!data || typeof data !== "object") return $done({});
     if (isTabs) {
       if (simplify && Array.isArray(data.tab_list)) {
-        const following = data.tab_list.filter(tab => tab && tab.tab_type === "follow");
-        if (following.length) {
-          count.tabs = data.tab_list.length - following.length;
-          data.tab_list = following;
+        if (data.tab_list.some(tab => tab && tab.tab_type === "follow")) {
+          // The tested iOS app cannot cold-start reliably with just one tab.
+          // Preserve both built-in controllers; do not infer local UI selection.
+          const tabs = data.tab_list.filter(tab => tab && ["follow", "recommend"].includes(tab.tab_type));
+          count.tabs = data.tab_list.length - tabs.length;
+          data.tab_list = tabs;
         }
       }
     } else if (isConfig) {
