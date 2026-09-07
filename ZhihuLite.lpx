@@ -18,7 +18,7 @@ simplify = switch,true,tag=知乎精简,desc=首页只保留关注并使用最�
 ^https:\/\/api\.zhihu\.com\/.*\/featured-comment-ad(?:[/?]|$) reject-dict
 
 [Script]
-http-request ^https:\/\/api\.zhihu\.com\/moments_v\d+\? script-path=https://raw.githubusercontent.com/pujx233/Stash/main/ZhihuLite.js?v=f77f8228ee26,timeout=10,tag=知乎精简·最新时间线,argument=[{simplify}]
+http-request ^https:\/\/api\.zhihu\.com\/moments_v\d+\? script-path=https://raw.githubusercontent.com/pujx233/Stash/main/ZhihuLite.js?v=f77f8228ee26,timeout=10,tag=知乎精简·最新时间线,argument=[{simplify}],enable=false
 http-response ^https:\/\/(?:api|www|page-info|zhuanlan|m-cloud)\.zhihu\.com\/(?:root\/tab\/v\d+|moments(?:_v\d+)?(?:\?|$)|moments\/(?:recommend|timeline)(?:\?|$)|topstory\/(?:recommend|hot-lists)|questions\/\d+\/feeds|(?:answers|articles|pins)\/v\d+\/\d+|(?:api\/)?v\d+\/(?:questions|answers|articles)\/|next-(?:bff|data|render)(?:\?|$)|comment_v\d+\/|api\/cloud\/zhihu\/config\/all) script-path=https://raw.githubusercontent.com/pujx233/Stash/main/ZhihuLite.js?v=f77f8228ee26,requires-body=true,timeout=10,tag=知乎精简·内容清理,argument=[{simplify}]
 
 [Mitm]
