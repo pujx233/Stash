@@ -18,7 +18,7 @@ simplify = switch,true,tag=知乎精简,desc=只保留关注；单标签启动�
 ^https:\/\/api\.zhihu\.com\/.*\/featured-comment-ad(?:[/?]|$) reject-dict
 
 [Script]
-http-response ^https:\/\/(?:api|www|page-info|zhuanlan|m-cloud)\.zhihu\.com\/(?:root\/tab\/v\d+|moments(?:_v\d+)?(?:\?|$)|moments\/(?:recommend|timeline)(?:\?|$)|topstory\/(?:recommend|hot-lists)|questions\/\d+\/feeds|(?:answers|articles|pins)\/v\d+\/\d+|(?:api\/)?v\d+\/(?:questions|answers|articles)\/|next-(?:bff|data|render)(?:\?|$)|comment_v\d+\/|api\/cloud\/zhihu\/config\/all) script-path=https://raw.githubusercontent.com/pujx233/Stash/main/ZhihuLite.js?v=67339dfca30e,requires-body=true,timeout=10,tag=知乎精简·内容清理,argument=[{simplify}]
+http-response ^https:\/\/(?:api|www|page-info|zhuanlan|m-cloud)\.zhihu\.com\/(?:root\/tab\/v\d+|moments(?:_v\d+)?(?:\?|$)|moments\/(?:recommend|timeline)(?:\?|$)|topstory\/(?:recommend|hot-lists)|questions\/\d+\/feeds|(?:answers|articles|pins)\/v\d+\/\d+|(?:api\/)?v\d+\/(?:questions|answers|articles)\/|next-(?:bff|data|render)(?:\?|$)|comment_v\d+\/|api\/cloud\/zhihu\/config\/all) script-path=https://raw.githubusercontent.com/pujx233/Stash/main/ZhihuLite.js?v=2dfde5b8f3ea,requires-body=true,timeout=10,tag=知乎精简·内容清理,argument=[{simplify}]
 
 [Mitm]
 hostname=api.zhihu.com,www.zhihu.com,page-info.zhihu.com,zhuanlan.zhihu.com,m-cloud.zhihu.com

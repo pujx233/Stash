@@ -167,11 +167,12 @@
     ]);
     data.data.configs = data.data.configs.filter(config => {
       if (!config || typeof config !== "object") return true;
-      // One observed layout flag only. Hypothesis: moving Follow left leaves
-      // the native default page at slot 1, outside a one-tab response.
-      // Do not invent defaults, redirect feed requests, or alter saved sorting.
-      if (simplify && config.configKey === "follow_tab_is_move_left" && config.configValue === 1) {
-        config.configValue = 0;
+      // Native telemetry confirms ZHTopBarPageView.viewControllerAtIndex
+      // runs out of bounds after caching the single Follow tab.
+      // Controlled test: disable the observed left-move feature via its status;
+      // configValue is not the on/off gate. Client behavior still needs validation.
+      if (simplify && config.configKey === "follow_tab_is_move_left" && config.status === true) {
+        config.status = false;
         count.network++;
       }
       if (remove.has(config.configKey)) { count.network++; return false; }
