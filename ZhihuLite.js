@@ -1,4 +1,4 @@
-// 知乎精简：仅在 Mac 上验证的候选版，未发布、未通过真机验收。
+// 知乎精简 2026-09-08：单关注标签的布局开关对照，尚待实机验证。
 // API coverage informed by Kelee's Zhihu_remove_ads.lpx and fmz200's zhihu.js.
 // No account data is stored or sent by this script.
 (() => {
@@ -38,9 +38,7 @@
     if (isTabs) {
       if (simplify && Array.isArray(data.tab_list)) {
         if (data.tab_list.some(tab => tab && tab.tab_type === "follow")) {
-          // Temporary order probe: distinguish selection by native tab type from a fixed slot.
-          // Restore follow-only after this diagnostic; never ship this as the final design.
-          const tabs = data.tab_list.filter(tab => tab && ["follow", "recommend"].includes(tab.tab_type)).sort((a, b) => ["recommend", "follow"].indexOf(a.tab_type) - ["recommend", "follow"].indexOf(b.tab_type));
+          const tabs = data.tab_list.filter(tab => tab && tab.tab_type === "follow");
           count.tabs = data.tab_list.length - tabs.length;
           data.tab_list = tabs;
         }
@@ -169,6 +167,14 @@
     ]);
     data.data.configs = data.data.configs.filter(config => {
       if (!config || typeof config !== "object") return true;
+      // Native telemetry confirms ZHTopBarPageView.viewControllerAtIndex
+      // runs out of bounds after caching the single Follow tab.
+      // Controlled test: disable the observed left-move feature via its status;
+      // configValue is not the on/off gate. Client behavior still needs validation.
+      if (simplify && config.configKey === "follow_tab_is_move_left" && config.status === true) {
+        config.status = false;
+        count.network++;
+      }
       if (remove.has(config.configKey)) { count.network++; return false; }
       if (config.configValue && typeof config.configValue === "object") {
         for (const key of ["delayHttpdns", "dnsParser", "HTTPDNS"]) {
