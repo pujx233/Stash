@@ -1,4 +1,4 @@
-// 知乎精简 2026-09-08：关注流兴趣推荐卡片修正。
+// 知乎精简 2026-09-08：单关注标签的布局开关对照，尚待实机验证。
 // API coverage informed by Kelee's Zhihu_remove_ads.lpx and fmz200's zhihu.js.
 // No account data is stored or sent by this script.
 (() => {
@@ -38,9 +38,7 @@
     if (isTabs) {
       if (simplify && Array.isArray(data.tab_list)) {
         if (data.tab_list.some(tab => tab && tab.tab_type === "follow")) {
-          // Existing temporary two-tab behavior is retained for a controlled card-only comparison.
-          // This does NOT satisfy the requested follow-only navigation or prove its root cause.
-          const tabs = data.tab_list.filter(tab => tab && ["follow", "recommend"].includes(tab.tab_type));
+          const tabs = data.tab_list.filter(tab => tab && tab.tab_type === "follow");
           count.tabs = data.tab_list.length - tabs.length;
           data.tab_list = tabs;
         }
@@ -169,6 +167,13 @@
     ]);
     data.data.configs = data.data.configs.filter(config => {
       if (!config || typeof config !== "object") return true;
+      // One observed layout flag only. Hypothesis: moving Follow left leaves
+      // the native default page at slot 1, outside a one-tab response.
+      // Do not invent defaults, redirect feed requests, or alter saved sorting.
+      if (simplify && config.configKey === "follow_tab_is_move_left" && config.configValue === 1) {
+        config.configValue = 0;
+        count.network++;
+      }
       if (remove.has(config.configKey)) { count.network++; return false; }
       if (config.configValue && typeof config.configValue === "object") {
         for (const key of ["delayHttpdns", "dnsParser", "HTTPDNS"]) {

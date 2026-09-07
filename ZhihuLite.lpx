@@ -1,5 +1,5 @@
 #!name=知乎精简
-#!desc=拦截已知广告接口，清理关注流中的“你可能感兴趣”等推荐卡片及回答流推荐引导。当前精简导航保留关注和推荐，隐藏热榜、圈子等标签；关闭开关后恢复完整导航并保留已有广告过滤。关注排序使用知乎自身的「最新」选项。
+#!desc=只保留关注标签，清理已知广告和“你可能感兴趣”卡片。正在验证单标签的冷启动兼容性；关闭精简后恢复完整导航并保留去广告。
 #!author=pujx233
 #!homepage=https://github.com/pujx233/Stash
 #!openUrl=https://apps.apple.com/app/id432274380
@@ -9,7 +9,7 @@
 #!date=2026-09-08
 
 [Argument]
-simplify = switch,true,tag=知乎精简,desc=保留关注和推荐，隐藏热榜、圈子等标签，兼容知乎冷启动。关闭后恢复完整导航，去广告仍生效。
+simplify = switch,true,tag=知乎精简,desc=只保留关注；单标签启动兼容性验证中。关闭后恢复完整导航，去广告仍生效。
 
 [Rewrite]
 ^https:\/\/(?:api|www)\.zhihu\.com\/commercial_api\/ reject-dict
@@ -18,7 +18,7 @@ simplify = switch,true,tag=知乎精简,desc=保留关注和推荐，隐藏热�
 ^https:\/\/api\.zhihu\.com\/.*\/featured-comment-ad(?:[/?]|$) reject-dict
 
 [Script]
-http-response ^https:\/\/(?:api|www|page-info|zhuanlan|m-cloud)\.zhihu\.com\/(?:root\/tab\/v\d+|moments(?:_v\d+)?(?:\?|$)|moments\/(?:recommend|timeline)(?:\?|$)|topstory\/(?:recommend|hot-lists)|questions\/\d+\/feeds|(?:answers|articles|pins)\/v\d+\/\d+|(?:api\/)?v\d+\/(?:questions|answers|articles)\/|next-(?:bff|data|render)(?:\?|$)|comment_v\d+\/|api\/cloud\/zhihu\/config\/all) script-path=https://raw.githubusercontent.com/pujx233/Stash/main/ZhihuLite.js?v=aedf69976bf1,requires-body=true,timeout=10,tag=知乎精简·内容清理,argument=[{simplify}]
+http-response ^https:\/\/(?:api|www|page-info|zhuanlan|m-cloud)\.zhihu\.com\/(?:root\/tab\/v\d+|moments(?:_v\d+)?(?:\?|$)|moments\/(?:recommend|timeline)(?:\?|$)|topstory\/(?:recommend|hot-lists)|questions\/\d+\/feeds|(?:answers|articles|pins)\/v\d+\/\d+|(?:api\/)?v\d+\/(?:questions|answers|articles)\/|next-(?:bff|data|render)(?:\?|$)|comment_v\d+\/|api\/cloud\/zhihu\/config\/all) script-path=https://raw.githubusercontent.com/pujx233/Stash/main/ZhihuLite.js?v=67339dfca30e,requires-body=true,timeout=10,tag=知乎精简·内容清理,argument=[{simplify}]
 
 [Mitm]
 hostname=api.zhihu.com,www.zhihu.com,page-info.zhihu.com,zhuanlan.zhihu.com,m-cloud.zhihu.com
