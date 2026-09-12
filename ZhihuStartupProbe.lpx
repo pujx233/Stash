@@ -1,0 +1,11 @@
+#!name=知乎启动实验
+#!desc=临时单变量验证：仅将 fu_home_st_opt 从 1 改为 0；不能视为已确认的修复。配合原知乎去广告插件使用。
+#!author=pujx233
+#!tag=检测工具
+#!date=2026-09-12
+
+[Script]
+http-response ^https:\/\/api\.zhihu\.com\/lab\/api\/config(?:\?|$) script-path=https://raw.githubusercontent.com/pujx233/Stash/zhihu-startup-test-20260912/ZhihuStartupProbe.js?v=8f507a345854,requires-body=true,binary-body-mode=true,timeout=10,tag=知乎启动实验
+
+[MitM]
+hostname=api.zhihu.com
